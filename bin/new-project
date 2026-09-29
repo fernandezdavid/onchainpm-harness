@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# Create a new project from the harness template.
+#
+#   bin/new-project <target-dir> [project-name]
+#
+# The target must not exist, or must be empty. Nothing outside the target changes.
+# If a step fails, the target is put back the way it was.
+set -euo pipefail
+
+usage() { echo "usage: bin/new-project <target-dir> [project-name]" >&2; exit 2; }
+fail() { echo "error: $*. Nothing was changed." >&2; exit 1; }
+[ $# -ge 1 ] || usage
+
+HARNESS="$(cd "$(dirname "$0")/.." && pwd)"
+TARGET="$1"
+NAME="${2:-$(basename "$TARGET")}"
+
+case "$NAME" in *$'\n'*|*$'\r'*) fail "the project name contains a line break" ;; esac
+[ -n "$NAME" ] || fail "the project name is empty"
+
+if [ -e "$TARGET" ] && [ ! -d "$TARGET" ]; then fail "$TARGET exists and is not a directory"; fi
+if [ -d "$TARGET" ] && [ -n "$(ls -A "$TARGET" 2>/dev/null)" ]; then fail "$TARGET exists and is not empty"; fi
+
+CREATED=0
+[ -d "$TARGET" ] || CREATED=1
+cleanup() {
+  local code=$?
+  if [ "$code" -ne 0 ]; then
+    if [ "$CREATED" = 1 ]; then rm -rf "$TARGET"; else find "$TARGET" -mindepth 1 -delete 2>/dev/null || true; fi
+    echo "error: new-project failed. $TARGET was put back the way it was." >&2
+  fi
+}
+trap cleanup EXIT
+
+mkdir -p "$TARGET"
+cp -R "$HARNESS/template/." "$TARGET/"
+
+# Record the harness version the project started from.
+VERSION="$(git -C "$HARNESS" rev-parse --short HEAD 2>/dev/null || echo unknown)"
+if [ -n "$(git -C "$HARNESS" status --porcelain 2>/dev/null)" ]; then VERSION="$VERSION-dirty"; fi
+echo "$VERSION" > "$TARGET/.harness-version"
+
+# Fill the project name. Escape the characters sed treats as special in a replacement.
+ESCAPED="$(printf '%s' "$NAME" | sed -e 's/[\\&|]/\\&/g')"
+{ grep -rlF '{{PROJECT_NAME}}' "$TARGET" || true; } | while IFS= read -r file; do
+  sed -i.harness-bak "s|{{PROJECT_NAME}}|$ESCAPED|g" "$file"
+  rm -f "$file.harness-bak"
+done
+
+chmod +x "$TARGET"/scripts/*.sh "$TARGET"/tools/adr-verify/runner.sh "$TARGET"/tools/adr-verify/checks/*.sh
+
+if [ ! -d "$TARGET/.git" ]; then
+  git -C "$TARGET" init -b main -q
+fi
+
+cat <<MSG
+Created "$NAME" in $TARGET (harness $VERSION).
+
+Next:
+  1. cd "$TARGET"
+  2. Set the commit identity for this repository: git config --local user.email <email>
+  3. Open your agent there and ask it to follow BOOTSTRAP.md.
+  4. bash scripts/check-bootstrap.sh lists the slots that are still open.
+MSG

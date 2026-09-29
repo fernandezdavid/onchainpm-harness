@@ -1,0 +1,19 @@
+# OS and editor
+.DS_Store
+.vscode/
+.idea/
+
+# Secrets
+.env
+.env.*
+
+# Local work
+prototypes/
+scratch/
+
+# Agent local state
+.claude/settings.local.json
+.claude/worktrees/
+
+# Private rules, never published
+global/AGENTS.local.md
