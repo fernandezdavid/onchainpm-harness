@@ -25,6 +25,7 @@ Where each harness default was learned. The template itself stays product-neutra
 | L1 to L12 | Fire Your Coach design canon, laws L1 to L12 |
 | L12 (redundancy clause) | Robot Money copy rule: no facts already on screen |
 | L13 A number states its basis | Robot Money: changes in percentage points |
+| Design skill slot in "Start here", and the setup step that asks about it | The author runs impeccable's teach skill in every project with UI, and asked for setup to prompt for it |
 
 ## Personal rules (`global/AGENTS.md`)
 

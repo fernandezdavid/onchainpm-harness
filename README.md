@@ -107,7 +107,16 @@ Projects do not update themselves from the harness. `.harness-version` in each p
 
 ## Optional skills
 
-The template refers to the impeccable design skills (critique, polish, audit, animate) where an agent has them. Install them with the skills tool that manages `~/.agents/skills`, from `pbakaus/impeccable`.
+Setup asks whether to run the impeccable teach skill (`teach-impeccable`), which writes `.impeccable.md` for the other impeccable skills to read. `BOOTSTRAP.md` and `ADOPT.md` both ask, and a slot in `docs/design/README.md` keeps the setup check red until the answer is recorded. When the agent does not have the skills, it offers to install them and waits for a yes. `global/AGENTS.md` tells agents to run critique, polish, audit and animate on UI work before they hand it over.
+
+The skills come from `pbakaus/impeccable`. In Claude Code:
+
+```bash
+claude plugin marketplace add pbakaus/impeccable
+claude plugin install impeccable@impeccable
+```
+
+For other agents, follow the steps for that agent in the impeccable README.
 
 ## Requirements and tests
 
