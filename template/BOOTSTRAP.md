@@ -15,9 +15,10 @@ The template assumes GitHub: Actions workflows, a PR template, and a Cursor rule
    5. The review surface for UI: a local URL (web app) or the simulator and a dev build (native app).
 3. Do not invent answers. When the user does not know yet, write the question into the file as an open decision and remove the marker.
 4. Fill `docs/design/README.md`: the design system and voice docs in "Start here" (or "not yet"), and "Who this is for". Then review the laws with the user. Keep, change or delete each one. A law you keep needs a check this project can run.
-5. Read `docs/engineering/decisions.md`. H-1 to H-11 are harness defaults from earlier projects. Supersede any that do not fit with a project ADR. Do not delete them. Project ADRs start at ADR-1.
-6. Ask the user to protect `main` on the Git host: require a PR and a green CI before merge. The rule "never push to `main`" holds only when the host enforces it.
-7. Run the three checks in `AGENTS.md` § Core Commands. All pass means the bootstrap is done. Delete this file in the same commit.
+5. Ask the user whether to run the impeccable teach skill (`teach-impeccable`) now. It interviews the user and writes `.impeccable.md`, the context that critique, polish and audit read. Run it after step 4, so it starts from the filled canon. When it offers to add its context to `AGENTS.md`, decline: the canon owns that context, and `AGENTS.md` has a line budget (H-1). If you do not have the skill, say so: the user can install it from `pbakaus/impeccable` and run it later. Record the answer in the last row of "Start here" in `docs/design/README.md`: `.impeccable.md`, "none", or an open decision.
+6. Read `docs/engineering/decisions.md`. H-1 to H-11 are harness defaults from earlier projects. Supersede any that do not fit with a project ADR. Do not delete them. Project ADRs start at ADR-1.
+7. Ask the user to protect `main` on the Git host: require a PR and a green CI before merge. The rule "never push to `main`" holds only when the host enforces it.
+8. Run the three checks in `AGENTS.md` § Core Commands. All pass means the bootstrap is done. Delete this file in the same commit.
 
 ## What the harness does not decide
 

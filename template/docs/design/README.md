@@ -15,6 +15,7 @@ The laws below are defaults from earlier products. Each one names the incident t
 | **This doc** | Any UI or interaction work | The laws, the registers, the checks |
 | TODO(bootstrap): design system doc | How it looks | Palette, type, geometry, tokens |
 | TODO(bootstrap): voice doc | How it sounds | Voice, tone, words we use and avoid |
+| TODO(bootstrap): design skill context (for example `.impeccable.md`), or "none" | Design skills: critique, polish, audit | Nothing. It is derived from this doc and the two above |
 
 Those docs hold the detail. This doc holds the decision. Where they disagree with this one, this one is right and they are stale. Fix them.
 
