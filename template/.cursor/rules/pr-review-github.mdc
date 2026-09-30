@@ -1,0 +1,28 @@
+---
+description: When you review a GitHub PR, post the review on the PR, not only in chat.
+alwaysApply: true
+---
+
+# PR review: post on GitHub
+
+When the user asks you to **review**, **comment on** or **check** a pull request:
+
+1. **Post on GitHub** with `gh`. Do not only summarize in chat.
+2. **Formal review:** `gh pr review <n> --comment --body "..."` with the verdict, what is good, blockers and nits, and test and merge notes.
+3. **Timeline comment:** `gh pr comment <n> --body "..."` with a short verdict and a link to the formal review. People read the Conversation tab first.
+4. **Inline comments** for blockers and the core fix lines: `gh api repos/{owner}/{repo}/pulls/{n}/comments` with `commit_id`, `path`, `line`, `side=RIGHT` and `body`.
+5. **Return the PR URL** and say what you posted (review, timeline comment, number of inline comments).
+
+## Review content
+
+- Verdict: approve, approve with nits, or request changes.
+- Root cause, for bug-fix PRs.
+- What is good, specifically.
+- Blockers separate from nits.
+- Missing tests, CHANGELOG entry, screenshots, merge-order conflicts.
+- CI status from `gh pr checks <n>`.
+
+## Do not
+
+- End with a chat summary only.
+- Skip posting because another agent already reviewed. Review again when asked.

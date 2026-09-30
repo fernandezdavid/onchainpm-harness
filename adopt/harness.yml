@@ -1,0 +1,18 @@
+name: Harness
+
+# The harness checks, added by bin/adopt beside the project's own CI.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  harness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Agent memory budgets (H-1)
+        run: bash scripts/check-agent-memory.sh
+      - name: Setup slots filled and staged files merged
+        run: bash scripts/check-bootstrap.sh

@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+# Add the harness to a project that already exists.
+#
+#   bin/adopt <project-dir> [project-name]
+#
+# It never overwrites a file. Where the project already has a file, the harness
+# version goes to .harness/incoming/<path> for the agent to merge (see ADOPT.md).
+# It works on a new branch, harness/adopt, and refuses a working tree with changes.
+set -euo pipefail
+
+usage() { echo "usage: bin/adopt <project-dir> [project-name]" >&2; exit 2; }
+fail() { echo "error: $*. Nothing was changed." >&2; exit 1; }
+[ $# -ge 1 ] || usage
+
+HARNESS="$(cd "$(dirname "$0")/.." && pwd -P)"
+[ -d "$1" ] || fail "$1 is not a directory"
+TARGET="$(cd "$1" && pwd -P)"
+NAME="${2:-$(basename "$TARGET")}"
+BRANCH="harness/adopt"
+
+case "$NAME" in *$'\n'*|*$'\r'*) fail "the project name contains a line break" ;; esac
+[ -n "$NAME" ] || fail "the project name is empty"
+
+git -C "$TARGET" rev-parse --is-inside-work-tree >/dev/null 2>&1 || fail "$TARGET is not a git repository"
+TOP="$(cd "$(git -C "$TARGET" rev-parse --show-toplevel)" && pwd -P)"
+[ "$TOP" = "$TARGET" ] || fail "run adopt on the repository root, $TOP"
+[ -z "$(git -C "$TARGET" status --porcelain)" ] || fail "the working tree has changes. Commit or stash them first"
+git -C "$TARGET" rev-parse --verify --quiet HEAD >/dev/null || fail "the repository has no commits yet. Use bin/new-project for an empty project"
+if git -C "$TARGET" show-ref --verify --quiet "refs/heads/$BRANCH"; then fail "the branch $BRANCH already exists"; fi
+[ ! -e "$TARGET/.harness" ] || fail "$TARGET/.harness already exists"
+
+# Build the whole overlay in a temporary folder first, so a failure leaves the project untouched.
+STAGE="$(mktemp -d)"
+META="$(mktemp -d)"
+SWITCHED=0
+APPLIED=0
+ORIG_BRANCH="$(git -C "$TARGET" branch --show-current)"
+ORIG_HEAD="$(git -C "$TARGET" rev-parse HEAD)"
+
+rollback() { # undo a partial apply: remove what the overlay added, go back, delete the branch
+  set +e
+  while IFS= read -r rel; do rm -f "$TARGET/$rel"; done < "$META/files"
+  sort -r "$META/new-dirs" | while IFS= read -r dir; do rmdir "$TARGET/$dir" 2>/dev/null; done
+  if [ -n "$ORIG_BRANCH" ]; then
+    git -C "$TARGET" switch -q "$ORIG_BRANCH"
+  else
+    git -C "$TARGET" switch -q --detach "$ORIG_HEAD"
+  fi
+  git -C "$TARGET" branch -q -D "$BRANCH"
+}
+
+on_exit() {
+  local code=$?
+  if [ "$code" -ne 0 ] && [ "$SWITCHED" = 1 ] && [ "$APPLIED" = 0 ]; then
+    rollback
+    echo "error: adopt failed while it copied files. The project was put back the way it was." >&2
+  fi
+  rm -rf "$STAGE" "$META"
+}
+trap on_exit EXIT
+trap 'exit 130' INT TERM # an interrupted run also rolls back
+
+copied=()
+staged=()
+place() { # place <source-file> <path-in-project>
+  local src="$1" rel="$2" dest parent clash=0
+  # A parent path that exists in the project as a file would make the copy fail. Stage those too.
+  parent="$(dirname "$rel")"
+  while [ "$parent" != "." ]; do
+    if [ -e "$TARGET/$parent" ] && [ ! -d "$TARGET/$parent" ]; then clash=1; fi
+    parent="$(dirname "$parent")"
+  done
+  if [ "$clash" = 1 ] || [ -e "$TARGET/$rel" ] || [ -L "$TARGET/$rel" ]; then
+    dest="$STAGE/.harness/incoming/$rel"
+    staged+=("$rel")
+  else
+    dest="$STAGE/$rel"
+    copied+=("$rel")
+  fi
+  mkdir -p "$(dirname "$dest")"
+  cp "$src" "$dest"
+}
+
+while IFS= read -r -d '' src; do
+  rel="${src#"$HARNESS/template/"}"
+  case "$rel" in
+    BOOTSTRAP.md|.github/workflows/ci.yml) continue ;; # new-project only; adopt/ has the replacements
+  esac
+  place "$src" "$rel"
+done < <(find "$HARNESS/template" -type f -print0)
+
+place "$HARNESS/adopt/ADOPT.md" "ADOPT.md"
+place "$HARNESS/adopt/harness.yml" ".github/workflows/harness.yml"
+
+VERSION="$(git -C "$HARNESS" rev-parse --short HEAD 2>/dev/null || echo unknown)"
+if [ -n "$(git -C "$HARNESS" status --porcelain 2>/dev/null)" ]; then VERSION="$VERSION-dirty"; fi
+echo "$VERSION" > "$STAGE/.harness-version.tmp"
+place "$STAGE/.harness-version.tmp" ".harness-version"
+rm -f "$STAGE/.harness-version.tmp"
+
+ESCAPED="$(printf '%s' "$NAME" | sed -e 's/[\\&|]/\\&/g')"
+{ grep -rlF '{{PROJECT_NAME}}' "$STAGE" || true; } | while IFS= read -r file; do
+  sed -i.harness-bak "s|{{PROJECT_NAME}}|$ESCAPED|g" "$file"
+  rm -f "$file.harness-bak"
+done
+for f in "$STAGE"/scripts/*.sh "$STAGE"/tools/adr-verify/runner.sh "$STAGE"/tools/adr-verify/checks/*.sh; do
+  if [ -f "$f" ]; then chmod +x "$f"; fi
+done
+
+# Apply: one branch, then copy the overlay in. Existing files are never touched.
+# Record every file and every new folder first, so a failed copy can be undone exactly.
+(cd "$STAGE" && find . -type f | sed 's|^\./||') > "$META/files"
+(cd "$STAGE" && find . -mindepth 1 -type d | sed 's|^\./||') | while IFS= read -r dir; do
+  if [ ! -e "$TARGET/$dir" ]; then echo "$dir"; fi
+done > "$META/new-dirs"
+git -C "$TARGET" switch -q -c "$BRANCH"
+SWITCHED=1
+cp -R "$STAGE/." "$TARGET/"
+APPLIED=1
+
+echo "Adopted the harness into \"$NAME\" on branch $BRANCH (harness $VERSION)."
+echo
+echo "Added ${#copied[@]} file(s)."
+if [ ${#staged[@]} -gt 0 ]; then
+  echo "Staged ${#staged[@]} file(s) the project already had, in .harness/incoming/:"
+  printf '  %s\n' "${staged[@]}"
+fi
+cat <<EOF
+
+Next:
+  1. cd "$TARGET"
+  2. Open your agent there and ask it to follow ADOPT.md.
+  3. bash scripts/check-bootstrap.sh lists what is still open.
+EOF

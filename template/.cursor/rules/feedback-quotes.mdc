@@ -1,0 +1,20 @@
+---
+description: Feedback PRs and issues need verbatim user quotes and a plain-language proposed solution
+alwaysApply: true
+---
+
+# Feedback quotes and proposed solutions
+
+When a change or an issue addresses **direct user feedback** (in-app feedback, interview notes, support, beta testers):
+
+1. Put the **user's exact words** in the PR description or the issue, as a markdown blockquote.
+2. Give the source and date, and the feedback ID when there is one.
+3. Do not rely on a paraphrase alone.
+4. Redact emails and other personal data. Keep the wording of the complaint or idea.
+
+For every **PR that changes behavior**, feedback-driven or not:
+
+5. Include a plain-language **Proposed solution** section: what was wrong, what we chose, and the trade-offs.
+6. A reviewer must understand the fix without reading the diff. Outcome-only bullets are not enough.
+
+Canonical rule: H-4 in `docs/engineering/decisions.md`.
