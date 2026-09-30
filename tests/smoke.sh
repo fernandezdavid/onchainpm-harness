@@ -180,7 +180,7 @@ while IFS= read -r f; do
   grep -qF "$rel" "$HARNESS/adopt/ADOPT.md" || missing="$missing ADOPT.md:$rel"
 done < <(grep -rlF 'TODO(bootstrap)' "$HARNESS/template" --exclude=BOOTSTRAP.md --exclude=check-bootstrap.sh)
 if [ -z "$missing" ]; then ok "every file with a slot is named in BOOTSTRAP.md and ADOPT.md"; else bad "every file with a slot is named in BOOTSTRAP.md and ADOPT.md:$missing"; fi
-check "BOOTSTRAP.md and ADOPT.md both offer the design skill setup and its install" '(for f in template/BOOTSTRAP.md adopt/ADOPT.md; do grep -qF "teach-impeccable" "$HARNESS/$f" && grep -qF "claude plugin install impeccable@impeccable" "$HARNESS/$f" || exit 1; done)'
+check "BOOTSTRAP.md and ADOPT.md both offer the design skill setup, its install and its slot" '(for f in template/BOOTSTRAP.md adopt/ADOPT.md; do grep -qF "teach-impeccable" "$HARNESS/$f" && grep -qF "claude plugin install impeccable@impeccable" "$HARNESS/$f" && grep -qF "\"design skill context\" row" "$HARNESS/$f" || exit 1; done)'
 lines=$(awk 'END { print NR }' "$HARNESS/global/AGENTS.md")
 check "global/AGENTS.md within 150 lines ($lines)" '[ "$lines" -le 150 ]'
 
