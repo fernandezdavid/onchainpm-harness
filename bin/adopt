@@ -31,7 +31,34 @@ if git -C "$TARGET" show-ref --verify --quiet "refs/heads/$BRANCH"; then fail "t
 
 # Build the whole overlay in a temporary folder first, so a failure leaves the project untouched.
 STAGE="$(mktemp -d)"
-trap 'rm -rf "$STAGE"' EXIT
+META="$(mktemp -d)"
+SWITCHED=0
+APPLIED=0
+ORIG_BRANCH="$(git -C "$TARGET" branch --show-current)"
+ORIG_HEAD="$(git -C "$TARGET" rev-parse HEAD)"
+
+rollback() { # undo a partial apply: remove what the overlay added, go back, delete the branch
+  set +e
+  while IFS= read -r rel; do rm -f "$TARGET/$rel"; done < "$META/files"
+  sort -r "$META/new-dirs" | while IFS= read -r dir; do rmdir "$TARGET/$dir" 2>/dev/null; done
+  if [ -n "$ORIG_BRANCH" ]; then
+    git -C "$TARGET" switch -q "$ORIG_BRANCH"
+  else
+    git -C "$TARGET" switch -q --detach "$ORIG_HEAD"
+  fi
+  git -C "$TARGET" branch -q -D "$BRANCH"
+}
+
+on_exit() {
+  local code=$?
+  if [ "$code" -ne 0 ] && [ "$SWITCHED" = 1 ] && [ "$APPLIED" = 0 ]; then
+    rollback
+    echo "error: adopt failed while it copied files. The project was put back the way it was." >&2
+  fi
+  rm -rf "$STAGE" "$META"
+}
+trap on_exit EXIT
+trap 'exit 130' INT TERM # an interrupted run also rolls back
 
 copied=()
 staged=()
@@ -81,8 +108,15 @@ for f in "$STAGE"/scripts/*.sh "$STAGE"/tools/adr-verify/runner.sh "$STAGE"/tool
 done
 
 # Apply: one branch, then copy the overlay in. Existing files are never touched.
+# Record every file and every new folder first, so a failed copy can be undone exactly.
+(cd "$STAGE" && find . -type f | sed 's|^\./||') > "$META/files"
+(cd "$STAGE" && find . -mindepth 1 -type d | sed 's|^\./||') | while IFS= read -r dir; do
+  if [ ! -e "$TARGET/$dir" ]; then echo "$dir"; fi
+done > "$META/new-dirs"
 git -C "$TARGET" switch -q -c "$BRANCH"
+SWITCHED=1
 cp -R "$STAGE/." "$TARGET/"
+APPLIED=1
 
 echo "Adopted the harness into \"$NAME\" on branch $BRANCH (harness $VERSION)."
 echo

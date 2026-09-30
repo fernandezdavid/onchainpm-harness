@@ -96,6 +96,24 @@ check "fills the project name" 'grep -qF "Existing App" "$E/STRATEGY.md" && ! gr
 expect_exit 1 "setup check fails while files are staged" bash "$E/scripts/check-bootstrap.sh"
 expect_exit 1 "refuses to adopt twice" bash "$HARNESS/bin/adopt" "$E"
 
+# A copy that fails after the branch exists must put everything back
+if [ "$(id -u)" != 0 ]; then
+  F="$TMP/failing"
+  mkdir -p "$F/docs"
+  printf 'notes\n' > "$F/docs/notes.md"
+  git -C "$F" init -q -b main
+  git -C "$F" -c user.email=t@example.com -c user.name=T add -A
+  git -C "$F" -c user.email=t@example.com -c user.name=T commit -q -m "existing project"
+  chmod 555 "$F/docs"
+  expect_exit 1 "a copy that fails mid-apply exits with an error" bash "$HARNESS/bin/adopt" "$F"
+  chmod 755 "$F/docs"
+  check "a failed apply returns to the original branch" '[ "$(git -C "$F" branch --show-current)" = main ]'
+  check "a failed apply deletes the harness/adopt branch" '! git -C "$F" show-ref --verify --quiet refs/heads/harness/adopt'
+  check "a failed apply leaves no file behind" '[ -z "$(git -C "$F" status --porcelain --ignored)" ]'
+else
+  echo "SKIP  mid-apply failure (running as root, so permissions cannot force a failure)"
+fi
+
 # Simulate the agent finishing ADOPT.md
 rm "$E/tools" && mv "$E/.harness/incoming/tools" "$E/tools"
 { cat "$E/.harness/incoming/AGENTS.md"; printf '\n## Project rules\n\n- Use tabs.\n'; } > "$E/AGENTS.md"
@@ -151,6 +169,7 @@ check "published files hold no email address" '! (cd "$HARNESS" && tr "\n" "\0" 
 check "published files name no private workspace or server" '! (cd "$HARNESS" && grep -v "^tests/smoke.sh$" "$FILES" | tr "\n" "\0" | xargs -0 grep -liE "robotmoney|tntlabs|chainflip|linear-rm|linear-personal" 2>/dev/null | grep -q .)'
 check "no em dashes in tracked or new files" '! (cd "$HARNESS" && tr "\n" "\0" < "$FILES" | xargs -0 grep -ln $'"'"'\xe2\x80\x94'"'"' 2>/dev/null | grep -q .)'
 check "template and adopt name no product or workspace" '! grep -rniE "fire your coach|fireyourcoach|robot ?money|robotmoney|\bFYC\b|OCPM|tntlabs" "$HARNESS/template" "$HARNESS/adopt"'
+check "the decision log numbers project decisions from ADR-1" 'grep -qF "Project decisions, \`ADR-1\` onward" "$HARNESS/template/docs/engineering/decisions.md" && ! grep -qE "Project decisions, \`H-" "$HARNESS/template/docs/engineering/decisions.md"'
 check "template cross-references to defaults use H- IDs" '! grep -rnE "\(ADR-[0-9]+\)" "$HARNESS/template" "$HARNESS/adopt"'
 missing=""
 while IFS= read -r f; do

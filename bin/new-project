@@ -11,7 +11,7 @@ usage() { echo "usage: bin/new-project <target-dir> [project-name]" >&2; exit 2;
 fail() { echo "error: $*. Nothing was changed." >&2; exit 1; }
 [ $# -ge 1 ] || usage
 
-HARNESS="$(cd "$(dirname "$0")/.." && pwd)"
+HARNESS="$(cd "$(dirname "$0")/.." && pwd -P)"
 TARGET="$1"
 NAME="${2:-$(basename "$TARGET")}"
 

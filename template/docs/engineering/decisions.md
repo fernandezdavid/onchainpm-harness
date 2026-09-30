@@ -5,7 +5,7 @@ A short record of choices that the code does not explain by itself. Each entry s
 This file has two parts:
 
 - **Harness defaults, `H-1` to `H-11`.** Earlier projects paid for these with incidents. They have their own IDs so they never clash with this project's numbers. To change one, write a project ADR that says `Supersedes H-n` and why. Do not edit or delete the default.
-- **Project decisions, `H-1` onward.** This project's own decisions, numbered from 1.
+- **Project decisions, `ADR-1` onward.** This project's own decisions. They never reuse `H-` IDs.
 
 ## Format
 
