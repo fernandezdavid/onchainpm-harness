@@ -38,6 +38,7 @@ Edit the two source files and run the install again. Do not edit the generated c
   - Change production or shared infrastructure: migrations, deploys, jobs against production data.
   - Do anything other people can see: push, comment on a PR or issue, send a message, post to a service.
 - Never merge a PR that has review comments you have not addressed.
+- A test run is a job against production when the checkout holds production credentials. Run test suites only where they cannot reach production, such as a fresh worktree, which has no git-ignored env files. Unsetting variables is not a guard: a test can read an env file itself. In a checkout with production credentials, run only named test files you have checked, never a glob or a grep-built list.
 - Do not create structure in shared tools (Linear projects, milestones, batches of issues, shared docs) until I agree each layer. Propose it in chat first.
 - Never remove a feature flag or a rollout gate without my approval. Feature-complete does not mean ready for users.
 - When I test a local build live and give feedback, fix the code in the working tree. Do not post PR comments or file issues unless I ask.
