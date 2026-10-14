@@ -50,6 +50,7 @@ Bugs skip gate 2 when the fix is small and covered by a regression test. Everyth
 - **Screenshots:** attach to the PR, never commit. Stage them in `/tmp/<repo>-pr-screenshots/<branch>/`.
 - **Bulk data changes:** dry run to a JSON file, the owner reviews it, then apply in batches that stop on the first failure.
 - **Review comments:** reply with the fix or the reason, then resolve the thread.
+- **LLM feature changes:** run an eval before shipping a model, prompt or format change. See `docs/engineering/evals.md`.
 
 ## Scheduled routines
 
