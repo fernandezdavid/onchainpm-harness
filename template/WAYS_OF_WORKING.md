@@ -46,7 +46,7 @@ Bugs skip gate 2 when the fix is small and covered by a regression test. Everyth
 
 - **Branches:** `feat/<slug>`, `fix/<slug>`, `hotfix/<slug>`. Branch from `main`, PR back to `main`.
 - **PR size:** one PR per logical change. Bundle related sub-issues. Stack PRs only when the owner agrees; then merge from the bottom up.
-- **Prototypes:** build big UI changes as a standalone HTML prototype with at least two variations. Prototypes stay local in `prototypes/` (gitignored).
+- **Prototypes:** build big UI changes as a standalone HTML prototype with at least two variations. Prototypes stay local in `prototypes/` (gitignored). For a native app, prototype natively on a design branch that never merges.
 - **Screenshots:** attach to the PR, never commit. Use a secret gist for test or fixture data only (it is unlisted, not private). Otherwise stage them in `/tmp/<repo>-pr-screenshots/<branch>/`.
 - **Bulk data changes:** dry run to a JSON file, the owner reviews it, then apply in batches that stop on the first failure.
 - **Review comments:** reply with the fix or the reason, then resolve the thread.
