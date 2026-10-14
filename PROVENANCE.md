@@ -27,6 +27,12 @@ Where each harness default was learned. The template itself stays product-neutra
 | L13 A number states its basis | Robot Money: changes in percentage points |
 | Design skill slot in "Start here", and the setup step that asks about it | The author runs impeccable's teach skill in every project with UI, and asked for setup to prompt for it |
 
+## Guides (`template/docs/engineering/`)
+
+| Guide | Source |
+|---|---|
+| `evals.md` | Fire Your Coach plan-generation eval, 2026-10 (`app/scripts/eval-plan-generation.mjs`, ADR-86): 10 synthetic fixtures, 5 variants, $4.80 spent. The preflight, content-parity and rollback-snapshot steps come from failures in that run |
+
 ## Personal rules (`global/AGENTS.md`)
 
 Extracted from 84 feedback and user memories across 12 projects' Claude Code auto-memory, plus the house rules of a team context repository and the previous `~/.claude/CLAUDE.md`. Private details (addresses, workspace names, private repositories) moved to the git-ignored `global/AGENTS.local.md`. Rules that applied to one product only stayed in that product.

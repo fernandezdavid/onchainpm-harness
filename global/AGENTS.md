@@ -82,6 +82,7 @@ Edit the two source files and run the install again. Do not edit the generated c
 - Record non-obvious decisions in the repository's ADR log. When an ADR claims an invariant, add a grep-level check in CI if you can.
 - When the build differs from the spec, add an "As built" list of the differences to the spec in the same PR.
 - Security findings (an open vulnerability, an exposed secret, a missing control): run `gh repo view <repo> --json visibility` first. Never file one in a public repository. Use the tracker or a private repository.
+- A change to an LLM feature's model, prompt or output format needs an eval: run the baseline and the change on the same synthetic inputs, and compare speed, cost, failures and content. Before any paid run, show me the estimated spend and wait for my OK. Method: `docs/engineering/evals.md` in the repository or in the harness template.
 
 ## UI defaults
 

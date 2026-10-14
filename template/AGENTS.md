@@ -40,6 +40,7 @@ TODO(bootstrap): the few structural rules that every change must respect (layeri
 
 - Use a feature branch and a PR for every change. Never push to `main`.
 - Write the failing test first for new features and bug fixes. CSS-only and HTML-only changes are exempt.
+- A change to an LLM feature's model, prompt or output format needs an eval before it ships. See `docs/engineering/evals.md`.
 - TODO(bootstrap): name the data this product must never lose, and the one write path allowed to change it. Guard it with an ADR and a drift check.
 - Record non-obvious decisions in `docs/engineering/decisions.md`. When an ADR claims an invariant, add a check under `tools/adr-verify/checks/`.
 - Active work lives in the tracker, not in markdown. TODO(bootstrap): name the tracker, team and project, and the state new issues start in.
@@ -76,5 +77,6 @@ TODO(bootstrap): who the users are, where and how they use the product, and the 
 |---|---|
 | Any UI or interaction | `docs/design/README.md` |
 | Decisions and their reasons | `docs/engineering/decisions.md` |
+| An LLM feature's model, prompt or output format | `docs/engineering/evals.md` |
 | How work flows (tracker, agents, gates) | `WAYS_OF_WORKING.md` |
 | Scheduled agent routines | `docs/agents/README.md` |
