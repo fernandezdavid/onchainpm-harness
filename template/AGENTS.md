@@ -40,12 +40,12 @@ TODO(bootstrap): the few structural rules that every change must respect (layeri
 
 - Use a feature branch and a PR for every change. Never push to `main`.
 - Write the failing test first for new features and bug fixes. CSS-only and HTML-only changes are exempt.
-- A failed read must not return the same value as an empty result when the caller acts on it. Return an error or `null`, and make the caller stop.
-- When a privacy-safe path fails, fail closed. Do not fall back to the less safe default.
 - TODO(bootstrap): name the data this product must never lose, and the one write path allowed to change it. Guard it with an ADR and a drift check.
 - Record non-obvious decisions in `docs/engineering/decisions.md`. When an ADR claims an invariant, add a check under `tools/adr-verify/checks/`.
 - Active work lives in the tracker, not in markdown. TODO(bootstrap): name the tracker, team and project, and the state new issues start in.
 - User-facing changes need a `CHANGELOG.md` entry.
+- A failed read must not return the same value as an empty result when the caller acts on it. Return an error or `null`, and make the caller stop.
+- When a privacy-safe path fails, fail closed. Do not fall back to the less safe default.
 - Stage explicit paths only. Never `git add -A` or `git add .`. Other people's unfinished work may be in the tree.
 
 ## When You Push Back
