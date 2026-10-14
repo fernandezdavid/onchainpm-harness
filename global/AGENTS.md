@@ -39,6 +39,7 @@ Edit the two source files and run the install again. Do not edit the generated c
   - Do anything other people can see: push, comment on a PR or issue, send a message, post to a service.
 - Never merge a PR that has review comments you have not addressed.
 - A test run is a job against production when the checkout holds production credentials. Run test suites only where they cannot reach production, such as a fresh worktree, which has no git-ignored env files. Unsetting variables is not a guard: a test can read an env file itself. In a checkout with production credentials, run only named test files you have checked, never a glob or a grep-built list.
+- Start a delegated job (another agent, a background task) from the worktree it must work in, and check its working directory before it runs anything. A brief that names a worktree does not move the job there.
 - Do not create structure in shared tools (Linear projects, milestones, batches of issues, shared docs) until I agree each layer. Propose it in chat first.
 - Never remove a feature flag or a rollout gate without my approval. Feature-complete does not mean ready for users.
 - When I test a local build live and give feedback, fix the code in the working tree. Do not post PR comments or file issues unless I ask.
@@ -51,11 +52,13 @@ Edit the two source files and run the install again. Do not edit the generated c
 - Check the commit identity before the first commit (`git config --get user.email`). The local rules say which address each kind of repository uses. Set identity with `--local` only.
 - Default to one PR per logical change, with related sub-issues bundled together. Stack PRs only when I agree. Then merge from the bottom up and retarget each child to `main`.
 - After you address a review comment, reply with the fix or the reason, then resolve the thread.
-- Never commit screenshots or prototypes. Stage screenshots in `/tmp/<repo>-pr-screenshots/<branch>/` with a caption for each. I drag them into the PR. Delete the folder after.
+- Never commit screenshots or prototypes. Attach screenshots to the PR from a secret gist: push the images to the gist and embed their raw URLs. A secret gist is unlisted, not private, so use it only for screenshots of test or fixture data, never real account data.
+- When you cannot upload screenshots, stage them in `/tmp/<repo>-pr-screenshots/<branch>/` with a caption for each, and I drag them into the PR. Delete the folder after.
 
 ## Review and verification
 
 - Before you push new features, substantive changes or bug fixes, get an adversarial review from a different model than the one that wrote the code. Address or dismiss each finding with a reason.
+- Dismiss a review finding only for a reason you have checked in the code or the data, not from memory.
 - That review is not needed for PR-comment follow-ups, docs, changelog or test-only changes, or while I test the branch by hand.
 - Do not ask me to review UI that you have not rendered and screenshotted yourself. Check each important state, in light and dark themes. Skip this while I test the same change live.
 - Treat delegated work as a draft. Run the acceptance checks yourself. Do not trust another agent's report or status label.
@@ -105,4 +108,5 @@ Edit the two source files and run the install again. Do not edit the generated c
 ## Agent-specific notes
 
 - Claude Code: the adversarial review is `/codex:adversarial-review`. Only I can run it. Commit, stop before push, and hand over.
+- Claude Code auto mode blocks gist uploads unless a permission rule allows them. Without that rule, stage the screenshots and say that the permission is the block.
 - Claude Code auto-memory: save project facts there. Put corrections here or in the repository `AGENTS.md`, as "How this file grows" says.
