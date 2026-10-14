@@ -42,6 +42,8 @@ Edit the two source files and run the install again. Do not edit the generated c
 - Do not create structure in shared tools (Linear projects, milestones, batches of issues, shared docs) until I agree each layer. Propose it in chat first.
 - Never remove a feature flag or a rollout gate without my approval. Feature-complete does not mean ready for users.
 - When I test a local build live and give feedback, fix the code in the working tree. Do not post PR comments or file issues unless I ask.
+- Never accept a license, terms of service or other agreement for me. Accepting binds me or my company. Stop and hand me that step.
+- Ask before you restart a shared local service that you did not start, such as a simulator service, a database or a dev server. I may be using it for other work.
 
 ## Git
 
@@ -49,6 +51,8 @@ Edit the two source files and run the install again. Do not edit the generated c
 - Stage explicit paths only. Never use `git add -A` or `git add .`. Run `git status --short` first, because my own unfinished work is often in the tree.
 - Fetch before you start work, not before you commit. Compare local `main` with the remote, and check open PRs for work that overlaps.
 - Check the commit identity before the first commit (`git config --get user.email`). The local rules say which address each kind of repository uses. Set identity with `--local` only.
+- Before you ask me to merge, read the PR description again against the final diff. Correct each statement that is no longer true. A long PR drifts from its first description.
+- When you say a PR is ready to merge, also say what the merge does: what it deploys (a migration that runs on deploy), what it blocks (over-the-air updates until a new binary) and who sees it (behind a flag or not). Green CI alone does not make a PR ready.
 - Default to one PR per logical change, with related sub-issues bundled together. Stack PRs only when I agree. Then merge from the bottom up and retarget each child to `main`.
 - After you address a review comment, reply with the fix or the reason, then resolve the thread.
 - Never commit screenshots or prototypes. Stage screenshots in `/tmp/<repo>-pr-screenshots/<branch>/` with a caption for each. I drag them into the PR. Delete the folder after.
@@ -60,6 +64,8 @@ Edit the two source files and run the install again. Do not edit the generated c
 - Do not ask me to review UI that you have not rendered and screenshotted yourself. Check each important state, in light and dark themes. Skip this while I test the same change live.
 - Treat delegated work as a draft. Run the acceptance checks yourself. Do not trust another agent's report or status label.
 - Do not delegate exact ports or mechanical renames to a generative agent. Do them with deterministic edits or a script.
+- A fix for a review finding in logic that changes user outcomes needs its own adversarial check before you push. Have independent agents build and run scenarios that try to break the fix. A reviewer's suggested fix is a hypothesis until it survives that check.
+- When agents review UI that I already approved, their findings about approved decisions are proposals for me, not edits. My approved design is the spec.
 - A restyle or copy pass changes presentation only. Before handover, diff the rendered text, numbers, chart series, links and disclaimers between `main` and the branch. Each fact that disappears needs a counterpart.
 - For UI work, let me see it running before you push: a local URL for a web app, the simulator or a dev build for a native app. Wait for my OK. A repository can override this.
 
@@ -71,11 +77,16 @@ Edit the two source files and run the install again. Do not edit the generated c
 - Data fixes: limit the change to the affected user or record, and do a dry run first. Build a general backfill tool only when scale requires it.
 - Values that change user outcomes (thresholds, multipliers, cuts) need three things: the decision, the reason, and a source. Use a citation, or label the value "heuristic, refine with data".
 - Record non-obvious decisions in the repository's ADR log. When an ADR claims an invariant, add a grep-level check in CI if you can.
+- When the build differs from the spec, add an "As built" list of the differences to the spec in the same PR.
 - Security findings (an open vulnerability, an exposed secret, a missing control): run `gh repo view <repo> --json visibility` first. Never file one in a public repository. Use the tracker or a private repository.
+- A failed read must not return the same value as an empty result when the caller acts on it. Return an error or `null`, and make the caller stop. A failed duplicate check that returns no rows causes a duplicate write.
+- When a privacy-safe path fails, fail closed. Do not fall back to the less safe default, such as storage that is backed up to the cloud.
+- Put decision rules in pure modules that the test runner can load. A rule that lives only in a store or a component that imports native code cannot be tested.
 
 ## UI defaults
 
 - Before a large UI change, build a standalone HTML prototype with at least two variations. Wait for my choice. After you build it, check the implementation against the prototype.
+- For a native app, prototype natively: a dev-only preview screen on a design branch that never merges. I judge native UI on the device, not in a browser.
 - No layout shift. Reserve space, keep rows mounted, animate every show and hide, and keep the scroll position when content swaps.
 - Motion and interaction feel are part of the design. After the visual pass, do a motion pass.
 - Every chart and table has an empty state. A section never disappears without an explanation.
@@ -84,6 +95,7 @@ Edit the two source files and run the install again. Do not edit the generated c
 - Do not number section headings ("01 /") unless the order is the content.
 - Do not limit body text to a narrow `ch` width. Make text the same width as the media in its column.
 - Copy must earn its place. Do not describe the page, add explanatory subtitles, repeat facts already on screen, or add "Optional" tags. Use one word for one concept.
+- When the system changes something for the user, name each dimension that changed and give its value before the change. Write "Volume 6 min, was 10. Intensity: easier pace", not "6/10 min, easier".
 - If the agent has the impeccable skills (critique, polish, audit, animate), use them on UI work before you hand it over.
 
 ## Writing (content, docs, public copy)
