@@ -74,5 +74,6 @@ TODO(bootstrap): who the users are, where and how they use the product, and the 
 |---|---|
 | Any UI or interaction | `docs/design/README.md` |
 | Decisions and their reasons | `docs/engineering/decisions.md` |
+| An LLM feature's model, prompt or output format | `docs/engineering/evals.md` |
 | How work flows (tracker, agents, gates) | `WAYS_OF_WORKING.md` |
 | Scheduled agent routines | `docs/agents/README.md` |

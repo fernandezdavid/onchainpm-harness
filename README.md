@@ -32,6 +32,7 @@ It was extracted from two shipping products and from the corrections I gave agen
 | `AGENTS.md`, `CLAUDE.md` | One source of rules for all agents, with line budgets (H-1) |
 | `STRATEGY.md`, `WAYS_OF_WORKING.md`, `CHANGELOG.md` | Pillars, the pipeline and its gates, shipped changes |
 | `docs/engineering/decisions.md` | Decision log: 11 harness defaults (`H-1` to `H-11`), then the project's own `ADR-1` onward |
+| `docs/engineering/evals.md` | How to measure a model, prompt or format change before it ships, with a cost estimate first |
 | `docs/design/README.md` | The design canon: four registers and 13 laws, each with a check |
 | `tools/adr-verify/` | Grep-level checks that the decisions still hold in the code (H-2) |
 | `scripts/` | Memory budgets and open setup slots, run in CI |
