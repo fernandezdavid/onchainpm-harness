@@ -52,7 +52,7 @@ Edit the two source files and run the install again. Do not edit the generated c
 - Check the commit identity before the first commit (`git config --get user.email`). The local rules say which address each kind of repository uses. Set identity with `--local` only.
 - Default to one PR per logical change, with related sub-issues bundled together. Stack PRs only when I agree. Then merge from the bottom up and retarget each child to `main`.
 - After you address a review comment, reply with the fix or the reason, then resolve the thread.
-- Never commit screenshots or prototypes. Attach screenshots to the PR from a secret gist: push the images to the gist and embed their raw URLs. A secret gist is unlisted, not private, so use it only for screenshots of test or fixture data, never real account data.
+- Never commit screenshots or prototypes. Attach screenshots to the PR from a secret gist: push the images to the gist and embed their raw URLs. A secret gist is unlisted, not private, so use it only for screenshots of test or fixture data, never real account data. Gist upload for those screenshots does not need a separate approval.
 - When you cannot upload screenshots, stage them in `/tmp/<repo>-pr-screenshots/<branch>/` with a caption for each, and I drag them into the PR. Delete the folder after.
 
 ## Review and verification

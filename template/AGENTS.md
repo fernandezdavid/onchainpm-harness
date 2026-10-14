@@ -55,7 +55,7 @@ When you refuse a request or block an action, state three things: the rule it br
 - Link the relevant pillar in `STRATEGY.md` and each engineering spec or ADR the PR touches.
 - When a PR or issue addresses user feedback, quote the user verbatim with the source and date. A summary alone is not enough (H-4).
 - Every PR that changes behavior needs a plain-language **Proposed solution** section: what was wrong, what we chose, and the trade-offs (H-4).
-- UI PRs need screenshots of each affected state. Never commit screenshots. Attach them to the PR.
+- UI PRs need screenshots of each affected state. Never commit screenshots. Use a secret gist for test or fixture data, or stage them in `/tmp/<repo>-pr-screenshots/<branch>/` (see `WAYS_OF_WORKING.md`).
 - Restart the dev server after code changes, before you test the UI.
 - Before you push new features, substantive changes or bug fixes, get an adversarial review from a different model than the one that wrote the code.
 
