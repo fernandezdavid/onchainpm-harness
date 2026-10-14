@@ -72,16 +72,16 @@ Edit the two source files and run the install again. Do not edit the generated c
 ## Engineering defaults
 
 - Write the failing test first for new features and bug fixes. CSS-only and HTML-only changes are exempt.
+- Put decision rules in pure modules that the test runner can load. A rule that lives only in a store or a component that imports native code cannot be tested.
 - Restart the dev server after code changes, before you ask me to test.
+- A failed read must not return the same value as an empty result when the caller acts on it. Return an error or `null`, and make the caller stop. A failed duplicate check that returns no rows causes a duplicate write.
+- When a privacy-safe path fails, fail closed. Do not fall back to the less safe default, such as storage that is backed up to the cloud.
 - Migrations: prefer a clean slate to preserving ambiguous legacy data. Never build a review queue for me. Curated reference data is the exception.
 - Data fixes: limit the change to the affected user or record, and do a dry run first. Build a general backfill tool only when scale requires it.
 - Values that change user outcomes (thresholds, multipliers, cuts) need three things: the decision, the reason, and a source. Use a citation, or label the value "heuristic, refine with data".
 - Record non-obvious decisions in the repository's ADR log. When an ADR claims an invariant, add a grep-level check in CI if you can.
 - When the build differs from the spec, add an "As built" list of the differences to the spec in the same PR.
 - Security findings (an open vulnerability, an exposed secret, a missing control): run `gh repo view <repo> --json visibility` first. Never file one in a public repository. Use the tracker or a private repository.
-- A failed read must not return the same value as an empty result when the caller acts on it. Return an error or `null`, and make the caller stop. A failed duplicate check that returns no rows causes a duplicate write.
-- When a privacy-safe path fails, fail closed. Do not fall back to the less safe default, such as storage that is backed up to the cloud.
-- Put decision rules in pure modules that the test runner can load. A rule that lives only in a store or a component that imports native code cannot be tested.
 
 ## UI defaults
 
