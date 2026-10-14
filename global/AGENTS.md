@@ -64,7 +64,7 @@ Edit the two source files and run the install again. Do not edit the generated c
 - Do not ask me to review UI that you have not rendered and screenshotted yourself. Check each important state, in light and dark themes. Skip this while I test the same change live.
 - Treat delegated work as a draft. Run the acceptance checks yourself. Do not trust another agent's report or status label.
 - Do not delegate exact ports or mechanical renames to a generative agent. Do them with deterministic edits or a script.
-- A fix for a review finding in logic that changes user outcomes needs its own adversarial check before you push. Have independent agents build and run scenarios that try to break the fix. A reviewer's suggested fix is a hypothesis until it survives that check.
+- A fix for a review finding in logic that changes user outcomes needs its own adversarial check before you push. A second model reviews the fix. For non-trivial logic, have independent agents build and run scenarios that try to break it. A reviewer's suggested fix is a hypothesis until it survives that check.
 - When agents review UI that I already approved, their findings about approved decisions are proposals for me, not edits. My approved design is the spec.
 - A restyle or copy pass changes presentation only. Before handover, diff the rendered text, numbers, chart series, links and disclaimers between `main` and the branch. Each fact that disappears needs a counterpart.
 - For UI work, let me see it running before you push: a local URL for a web app, the simulator or a dev build for a native app. Wait for my OK. A repository can override this.
