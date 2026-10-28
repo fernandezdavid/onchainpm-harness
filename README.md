@@ -33,6 +33,8 @@ It was extracted from two shipping products and from the corrections I gave agen
 | `STRATEGY.md`, `WAYS_OF_WORKING.md`, `CHANGELOG.md` | Pillars, the pipeline and its gates, shipped changes |
 | `docs/engineering/decisions.md` | Decision log: 11 harness defaults (`H-1` to `H-11`), then the project's own `ADR-1` onward |
 | `docs/engineering/evals.md` | How to measure a model, prompt or format change before it ships, with a cost estimate first |
+| `docs/engineering/product-analytics.md` | Analytics that answers the product's questions and carries no user content: allowlists, cookieless web, the visitor to lead to account join |
+| `docs/engineering/app-store-launch.md` | The first App Store submission: fields, review account, screenshots, build traps, and the steps only the account holder can do |
 | `docs/design/README.md` | The design canon: four registers and 13 laws, each with a check |
 | `tools/adr-verify/` | Grep-level checks that the decisions still hold in the code (H-2) |
 | `scripts/` | Memory budgets and open setup slots, run in CI |
